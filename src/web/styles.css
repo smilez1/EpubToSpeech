@@ -1,0 +1,109 @@
+@import 'tailwindcss';
+
+/*
+ * 主题变量集中在这里，后续做「日间/夜间/护眼」皮肤只需扩这组变量。
+ * Tailwind v4 的 @theme 会把它们变成可用的工具类（如 bg-surface、text-ink）。
+ */
+@theme {
+  --color-ink: #e8eaed;
+  --color-ink-muted: #9aa0a6;
+  --color-ink-faint: #6b7280;
+  --color-surface: #16181d;
+  --color-surface-2: #1e2128;
+  --color-surface-3: #272b34;
+  --color-edge: #333844;
+  --color-accent: #7aa2f7;
+  --color-accent-strong: #5b8def;
+  --color-good: #4ade80;
+  --color-warn: #fbbf24;
+  --color-bad: #f87171;
+
+  --font-sans: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, -apple-system, 'Segoe UI',
+    sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-surface);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 书架封面骨架屏动画 */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/*
+ * epub.js 宿主容器约束。
+ *
+ * 问题：epub.js 给容器设 `width: 100%`，同时又按自己量到的宽度给内部 stage 定宽，
+ * 形成"内容撑宽容器"的反馈——实测容器比窗口宽 10px，整页出现常驻横向滚动条。
+ *
+ * 修法：不去动容器的 overflow（分页模式要靠容器内部横向滚动来翻列，
+ * 一旦设成 hidden 后面的列就永远看不到），而是约束 stage 宽度 + 让宿主裁掉
+ * 超出的那几像素。
+ */
+.epub-host {
+  position: relative;
+  overflow: hidden; /* 宿主裁切，避免那 10px 溢出到整页 */
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* stage：不要让它的定宽反过来把父容器撑大 */
+.epub-host .epub-container > div {
+  max-width: 100%;
+}
+
+/* iframe 本身铺满 stage */
+.epub-host .epub-container > div > iframe {
+  max-width: 100%;
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-2) 25%,
+    var(--color-surface-3) 50%,
+    var(--color-surface-2) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+/* 尊重系统的「减少动态效果」偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-surface-3);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-edge);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}

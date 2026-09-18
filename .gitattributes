@@ -1,0 +1,19 @@
+# 仓库内统一使用 LF，检出时按平台自动转换
+* text=auto
+
+# Windows 批处理脚本必须是 CRLF，否则可能无法执行
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# 明确标记二进制文件，避免被当成文本做换行转换
+*.wav binary
+*.mp3 binary
+*.onnx binary
+*.epub binary
+*.bin binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.woff binary
+*.woff2 binary

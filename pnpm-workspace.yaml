@@ -1,0 +1,19 @@
+# 单包工程：显式声明根目录为唯一工作区成员，避免 pnpm 对 root 安装的歧义。
+# 注意：pnpm 会在 install 时改写本文件，尽量只保留 ASCII 内容。
+packages:
+  - "."
+
+# pnpm 默认拦截依赖的 postinstall 脚本，需要逐个表态。
+# - esbuild: false —— 它的 install.js 只是 spawnSync 调 `node bin/esbuild --version`
+#   做版本自检；在禁止管道 stdio 的受限环境里会因 EPERM 失败。平台二进制已由可选依赖
+#   @esbuild/win32-x64 装好，自检并非运行所必需。
+# - core-js / es5-ext：只是打印赞助信息，显式关掉，避免每次 install 都报 ignored builds
+allowBuilds:
+  esbuild: false
+  core-js: false
+  es5-ext: false
+
+# pnpm 12 默认对「刚发布不久」的版本做供应链拦截，会在 install 时报
+# ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION。本项目是本地个人工具，
+# 关掉这个门禁，避免每次改动 lockfile 都要处理 exclude 列表。
+minimumReleaseAge: 0
